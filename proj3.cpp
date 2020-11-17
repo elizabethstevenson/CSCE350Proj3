@@ -38,8 +38,32 @@ int findLastDigit(int n) {
     return n%10;
 }
 
-vector<int> AdditionTime(vector<int> vector1, vector<int> vector2) {
+vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
+    vector<int> s;
+    vector<int> carryOver;
+    int sum;
+    int temp1;
+    int temp2;
+    int temp3;
 
+    for(int i = 0; i < vector1.size(); ++i) {
+        sum = vector1.at(i) + vector2.at(i);
+        if (i > 0) {
+            sum += carryOver.at(i-1);
+        }
+        temp1 = sum;
+        temp2 = 0;
+        temp3 = sum;
+        if (product > 9) {
+            //get first digit
+            temp2 = findFirstDigit(temp1);
+            sum = findLastDigit(temp3);
+        }
+        s.push_back(sum);
+        carryOver.push_back(temp2);
+    }
+    s.push_back(temp2);
+    return s;
 }
 
 void bruteForce(vector<int> num1, vector<int> num2) {
@@ -83,11 +107,11 @@ void bruteForce(vector<int> num1, vector<int> num2) {
         carryOver.clear();
     }
     for(int i = 1; i < s.size(); ++i) {
-        s.at(0) = AdditionTime(s.at(0), s.at(i));
+        addition.at(0) = VectorAddition(addition.at(0), addition.at(i));
     }
     vector<int> finalAnswer;
     for(int i = 0; i < s.at(0).size(); ++i) {
-        finalAnswer.push_back(s.at(0).at(i));
+        finalAnswer.push_back(addition.at(0).at(i));
     }
     return finalAnswer;
 }
