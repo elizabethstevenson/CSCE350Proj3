@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 #include <vector>
+#include <algorithm>
 using std::cout;
 using std::cin;
 using std::endl;
@@ -38,13 +39,29 @@ int findLastDigit(int n) {
     return n%10;
 }
 
+vector <int> BalanceWithZeros(vector<int> vector1, vector<int> vector2) {
+    int zeros = 0;
+    zeros = vector1.size() - vector2.size();
+    for (int i = 0; i < zeros; ++i) {
+        vector2.insert(vector2.begin(), 0);
+    }
+    return vector2;
+}
+
 vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
-    vector<int> s;
+    vector<int> finalAnswer;
     vector<int> carryOver;
     int sum;
     int temp1;
     int temp2;
     int temp3;
+
+    if (vector2.size() < vector1.size()) {
+        vector2 = BalanceWithZeros(vector1, vector2);
+    }
+    else if (vector2.size() > vector1.size()) {
+        vector1 = BalanceWithZeros(vector2, vector1);
+    }
 
     for(int i = 0; i < vector1.size(); ++i) {
         sum = vector1.at(i) + vector2.at(i);
@@ -59,14 +76,14 @@ vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
             temp2 = findFirstDigit(temp1);
             sum = findLastDigit(temp3);
         }
-        s.push_back(sum);
+        finalAnswer.push_back(sum);
         carryOver.push_back(temp2);
     }
-    s.push_back(temp2);
-    return s;
+    finalAnswer.push_back(temp2);
+    return finalAnswer;
 }
 
-void bruteForce(vector<int> num1, vector<int> num2) {
+vector<int> bruteForce(vector<int> num1, vector<int> num2) {
     vector<int> s;
     vector<int> carryOver;
     vector<vector<int>> addition;
@@ -116,8 +133,84 @@ void bruteForce(vector<int> num1, vector<int> num2) {
     return finalAnswer;
 }
 
-void karatsuba(vector<int> num1, vector<int> num2) {
+vector<int> VectorSubtract(vector<int> vector1, vector<int> vector2) {
+    vector<int> finalAnswer;
+    
+}
 
+vector<int> karatsuba(vector<int> num1, vector<int> num2) {
+    vector<int> a0; //last m digits in a
+    vector<int> a1; //remaining digits in a
+    vector<int> b0; //last m digits in b
+    vector<int> b1; //remaining digits in b
+    vector<int> c2; //karatsuba(a1, b1)
+    vector<int> c0; //karatsuba(a0, b0)
+    vector<int> c1; //karatsuba(a1+a0, b1+b0)-c2-c0
+    vector<int> c1special;
+
+    if (num1.size() < 10 && num2.size() < 10) {
+        return bruteForce(num1, num2);
+    }
+    else {
+        int m = floor(max(num1.size(), num2.size())/2);
+
+        //making both number vectors be same length
+        if (num2.size() < num1.size()) {
+            num2 = BalanceWithZeros(num1, num2);
+        }
+        else if (num2.size() > num1.size()) {
+            num1 = BalanceWithZeros(num2, num1);
+        }
+
+        //setting up a0 and a1 with num1
+        for (int i = 0; i < num1.size(); ++i) {
+            if(num1.size()%2 == 0) {
+                if (i >= m) {
+                    a0.push_back(num1.at(i));
+                }
+                else {
+                    a1.push_back(num1.at(i));
+                }
+            }
+            else {
+                if (i > m) {
+                    a0.push_back(num1.at(i));
+                }
+                else {
+                    a1.push_back(num1.at(i));
+                }
+            }
+        }
+
+        //setting up b0 and b1 with num2
+        for (int i = 0; i < num2.size(); ++i) {
+            if (num2.size()%2 == 0) {
+                if (i >= m) {
+                    b0.push_back(num2.at(i));
+                }
+                else {
+                    b1.push_back(num2.at(i));
+                }
+            }
+            else {
+                if (i > m) {
+                    b0.push_back(num2.at(i));
+                }
+                else {
+                    b1.push_back(num2at(i));
+                }
+            }
+        }
+
+        c2 = karatsuba(a1, b1);
+        c0 = karatsuba(a0, b0);
+        //a1+a0, b1+b0
+        c1special = karatsuba(VectorAddition(a1, a0), VectorAddition(b1, b0));
+        // -c2-c0
+
+        //return 10^2m * c2 + 10^m *c1 + c0
+
+    }
     
 }
 
