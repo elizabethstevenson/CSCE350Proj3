@@ -11,6 +11,7 @@ using std::cin;
 using std::endl;
 using std::string;
 using std::vector;
+using std::max;
 
 vector<int> number1;
 vector<int> number2;
@@ -48,6 +49,12 @@ vector <int> BalanceWithZeros(vector<int> vector1, vector<int> vector2) {
     return vector2;
 }
 
+/*
+vector<int> UnbalanceWithZeros(vector<int> number) {
+    if(number.at(0) == 0 && )
+}
+*/
+
 vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
     vector<int> finalAnswer;
     vector<int> carryOver;
@@ -63,7 +70,7 @@ vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
         vector1 = BalanceWithZeros(vector2, vector1);
     }
 
-    for(int i = 0; i < vector1.size(); ++i) {
+    for (unsigned int i = 0; i < vector1.size(); ++i) {
         sum = vector1.at(i) + vector2.at(i);
         if (i > 0) {
             sum += carryOver.at(i-1);
@@ -71,7 +78,7 @@ vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
         temp1 = sum;
         temp2 = 0;
         temp3 = sum;
-        if (product > 9) {
+        if (sum > 9) {
             //get first digit
             temp2 = findFirstDigit(temp1);
             sum = findLastDigit(temp3);
@@ -88,46 +95,46 @@ vector<int> bruteForce(vector<int> num1, vector<int> num2) {
     vector<int> carryOver;
     vector<vector<int>> addition;
 
-    int product;
+    int amount;
     int temp1;
     int temp2;
     int temp3;
 
-    for(int i = 0; i < num2.size(); ++i) {
-        for(int j = 0; j < num1.size(); ++j) {
+    for(unsigned int i = 0; i < num2.size(); ++i) {
+        for(unsigned int j = 0; j < num1.size(); ++j) {
             if(num2.at(i) == 0 && num1.at(j) == 0) {
-                product = 0;
+                amount = 0;
             }
             else {
-                product = num2.at(i)*num1.a(j);
+                amount = num2.at(i)*num1.at(j);
             }
             if (j > 0) {
-                product += carryOver.at(j-1);
+                amount += carryOver.at(j-1);
             }
-            temp1 = product;
+            temp1 = amount;
             temp2 = 0;
-            temp3 = product;
-            if (product > 9) {
+            temp3 = amount;
+            if (amount > 9) {
                 //get first digit
                 temp2 = findFirstDigit(temp1);
-                product = findLastDigit(temp3);
+                amount = findLastDigit(temp3);
             }
-            s.push_back(product);
+            s.push_back(amount);
             carryOver.push_back(temp2);
         }
         s.push_back(temp2);
-        for (int k = 0; k < i; ++k) {
+        for (unsigned int k = 0; k < i; ++k) {
             s.push_back(0);
         }
         addition.push_back(s);
         s.clear();
         carryOver.clear();
     }
-    for(int i = 1; i < s.size(); ++i) {
+    for(unsigned int i = 1; i < s.size(); ++i) {
         addition.at(0) = VectorAddition(addition.at(0), addition.at(i));
     }
     vector<int> finalAnswer;
-    for(int i = 0; i < s.at(0).size(); ++i) {
+    for(unsigned int i = 0; i < addition.at(0).size(); ++i) {
         finalAnswer.push_back(addition.at(0).at(i));
     }
     return finalAnswer;
@@ -136,6 +143,37 @@ vector<int> bruteForce(vector<int> num1, vector<int> num2) {
 vector<int> VectorSubtract(vector<int> vector1, vector<int> vector2) {
     vector<int> finalAnswer;
     
+    //making both number vectors be same length
+    if (vector2.size() < vector1.size()) {
+        vector2 = BalanceWithZeros(vector1, vector2);
+    }
+    else if (vector2.size() > vector1.size()) {
+        vector1 = BalanceWithZeros(vector2, vector1);
+    }
+
+    //if 2 vectors are the same, returns 0
+    if(vector1 == vector2) {
+        vector<int> zeroVector;
+        zeroVector.push_back(0);
+        return zeroVector;
+    }
+
+    for (unsigned int i = 0; i < vector1.size(); ++i) {
+        if (vector1.at(i) < vector2.at(i)) {
+            vector1.at(i+1) = vector1.at(i+1) - 1;
+            vector1.at(i) = vector1.at(i) + 10;
+        }
+        finalAnswer.push_back(abs(vector1.at(i) - vector2.at(i)));
+    }
+
+    return finalAnswer;
+}
+
+vector<int> toTheTenth(vector<int> vector, int num1, int num2) {
+    for (int i = 0; i < (num1*num2); ++i) {
+        vector.push_back(0);
+    }
+    return vector;
 }
 
 vector<int> karatsuba(vector<int> num1, vector<int> num2) {
@@ -152,7 +190,7 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
         return bruteForce(num1, num2);
     }
     else {
-        int m = floor(max(num1.size(), num2.size())/2);
+        unsigned int m = floor((max(num1.size(), num2.size()))/2);
 
         //making both number vectors be same length
         if (num2.size() < num1.size()) {
@@ -163,7 +201,7 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
         }
 
         //setting up a0 and a1 with num1
-        for (int i = 0; i < num1.size(); ++i) {
+        for (unsigned int i = 0; i < num1.size(); ++i) {
             if(num1.size()%2 == 0) {
                 if (i >= m) {
                     a0.push_back(num1.at(i));
@@ -183,7 +221,7 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
         }
 
         //setting up b0 and b1 with num2
-        for (int i = 0; i < num2.size(); ++i) {
+        for (unsigned int i = 0; i < num2.size(); ++i) {
             if (num2.size()%2 == 0) {
                 if (i >= m) {
                     b0.push_back(num2.at(i));
@@ -197,7 +235,7 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
                     b0.push_back(num2.at(i));
                 }
                 else {
-                    b1.push_back(num2at(i));
+                    b1.push_back(num2.at(i));
                 }
             }
         }
@@ -207,9 +245,11 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
         //a1+a0, b1+b0
         c1special = karatsuba(VectorAddition(a1, a0), VectorAddition(b1, b0));
         // -c2-c0
-
+        c1 = VectorSubtract(c1special, VectorAddition(c2, c0));
         //return 10^2m * c2 + 10^m *c1 + c0
-
+        toTheTenth(c2, 2, m);
+        toTheTenth(c1, 1, m);
+        return VectorAddition(VectorAddition(c2,c1),c0);
     }
     
 }
