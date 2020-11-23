@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string.h>
+#include <string>
 #include <math.h>
 #include <vector>
 #include <algorithm>
@@ -12,6 +13,7 @@ using std::endl;
 using std::string;
 using std::vector;
 using std::max;
+using namespace std;
 
 vector<int> number1;
 vector<int> number2;
@@ -37,7 +39,19 @@ int findFirstDigit(int n) {
 }
 
 int findLastDigit(int n) {
-    return n%10;
+    return (n%10);
+}
+
+//reverse method bc i was having trouble figuring out
+//what was wrong and maybe reversing values is a good idea
+vector<int> reverse(vector<int> vector) {
+    vector<int> reversed;
+    int place;
+    for (int i = 0; i < vector.size(); ++i) {
+        place = vector.size()-1-i;
+        reversed.push_back(vector.at(place));
+    }
+    return reversed;
 }
 
 vector <int> BalanceWithZeros(vector<int> vector1, vector<int> vector2) {
@@ -49,11 +63,28 @@ vector <int> BalanceWithZeros(vector<int> vector1, vector<int> vector2) {
     return vector2;
 }
 
-/*
-vector<int> UnbalanceWithZeros(vector<int> number) {
-    if(number.at(0) == 0 && )
+
+vector<int> UnbalanceZeros(vector<int> number) {
+    string s;
+    string temp = "";
+
+    if(number.at(0) == 0 && equal(number.begin()+1, number.end(), number.begin())) {
+        number.clear();
+        number.push_back(0);
+        return number;
+    } else {
+        for (unsigned int i = 0; i < number.size(); ++i) {
+            s += to_string(number.at(i));
+        }
+        s.erase(0, s.find_first_not_of('0'));
+        number.clear();
+        for (unsigned int i = 0; i < s.size(); ++i) {
+            number.push_back(stoi(temp = s[i]));
+        }
+        return number;
+    }
 }
-*/
+
 
 vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
     vector<int> finalAnswer;
@@ -70,6 +101,11 @@ vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
         vector1 = BalanceWithZeros(vector2, vector1);
     }
 
+    //reverse(vector1.begin(), vector1.end());
+    //reverse(vector2.begin(), vector2.end());
+    reverse(vector1);
+    reverse(vector2);
+
     for (unsigned int i = 0; i < vector1.size(); ++i) {
         sum = vector1.at(i) + vector2.at(i);
         if (i > 0) {
@@ -83,10 +119,16 @@ vector<int> VectorAddition(vector<int> vector1, vector<int> vector2) {
             temp2 = findFirstDigit(temp1);
             sum = findLastDigit(temp3);
         }
-        finalAnswer.push_back(sum);
         carryOver.push_back(temp2);
+        finalAnswer.push_back(sum);
     }
     finalAnswer.push_back(temp2);
+    //reverse(finalAnswer.begin(), finalAnswer.end());
+    reverse(finalAnswer);
+/* Print statement that would not print anything
+    cout << "1 ";
+    printIntVector(finalAnswer); */
+
     return finalAnswer;
 }
 
@@ -99,6 +141,11 @@ vector<int> bruteForce(vector<int> num1, vector<int> num2) {
     int temp1;
     int temp2;
     int temp3;
+
+    //reverse(num1.begin(), num1.end());
+    //reverse(num2.begin(), num2.end());
+    reverse(num1);
+    reverse(num2);
 
     for(unsigned int i = 0; i < num2.size(); ++i) {
         for(unsigned int j = 0; j < num1.size(); ++j) {
@@ -123,12 +170,14 @@ vector<int> bruteForce(vector<int> num1, vector<int> num2) {
             carryOver.push_back(temp2);
         }
         s.push_back(temp2);
+        //reverse(s.begin(), s.end());
+        reverse(s);
         for (unsigned int k = 0; k < i; ++k) {
             s.push_back(0);
         }
         addition.push_back(s);
-        s.clear();
         carryOver.clear();
+        s.clear();
     }
     for(unsigned int i = 1; i < s.size(); ++i) {
         addition.at(0) = VectorAddition(addition.at(0), addition.at(i));
@@ -142,7 +191,31 @@ vector<int> bruteForce(vector<int> num1, vector<int> num2) {
 
 vector<int> VectorSubtract(vector<int> vector1, vector<int> vector2) {
     vector<int> finalAnswer;
+    vector<int> temp;
     
+    //okay maybe my issue is with the balancing 0s
+    vector1 = UnbalanceZeros(vector1);
+    vector2 = UnbalanceZeros(vector2);
+
+    if ((vector1.at(0) == 0) && (vector2.at(0) == 0) && (vector1.size() == 1) && (vector2.size() == 1)) {
+        return vector1;
+    }
+
+    if ((vector1.size()==vector2.size() && (vector1.at(0) < vector2.at(0))) || vector1.size() < vector2.size()) {
+        for (unsigned int i = 0; i < vector1.size(); i++) {
+            temp.push_back(vector1.at(i));
+        }
+        vector1.clear();
+        for (unsigned int i = 0; i < vector2.size(); ++i) {
+            vector1.push_back(vector2.at(i));
+        }
+        vector2.clear();
+        for (unsigned int i = 0; i < temp.size(); ++i) {
+            vector2.push_back(temp.at(i));
+        }
+        temp.clear();
+    }
+
     //making both number vectors be same length
     if (vector2.size() < vector1.size()) {
         vector2 = BalanceWithZeros(vector1, vector2);
@@ -151,12 +224,18 @@ vector<int> VectorSubtract(vector<int> vector1, vector<int> vector2) {
         vector1 = BalanceWithZeros(vector2, vector1);
     }
 
+    //reverse(vector1.begin(), vector1.end());
+    //reverse(vector2.begin(), vector2.end());
+    reverse(vector1);
+    reverse(vector2);
+/*
     //if 2 vectors are the same, returns 0
     if(vector1 == vector2) {
         vector<int> zeroVector;
         zeroVector.push_back(0);
         return zeroVector;
     }
+*/
 
     for (unsigned int i = 0; i < vector1.size(); ++i) {
         if (vector1.at(i) < vector2.at(i)) {
@@ -166,6 +245,12 @@ vector<int> VectorSubtract(vector<int> vector1, vector<int> vector2) {
         finalAnswer.push_back(abs(vector1.at(i) - vector2.at(i)));
     }
 
+/* I tried using these print statements but it was not printing for some weird reason
+    cout << "2 ";
+    printIntVector(finalAnswer);
+*/
+    //reverse(finalAnswer.begin(), finalAnswer.end());
+    reverse(finalAnswer);
     return finalAnswer;
 }
 
@@ -184,7 +269,7 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
     vector<int> c2; //karatsuba(a1, b1)
     vector<int> c0; //karatsuba(a0, b0)
     vector<int> c1; //karatsuba(a1+a0, b1+b0)-c2-c0
-    vector<int> c1special;
+    vector<int> special;
 
     if (num1.size() < 10 && num2.size() < 10) {
         return bruteForce(num1, num2);
@@ -220,9 +305,16 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
             }
         }
 
+/* Same thing here, cout and printIntVector did not print
+        cout << "a0 ";
+        printIntVector(a0);
+
+        cout << "a1 ";
+        printIntVector(a1); */
+
         //setting up b0 and b1 with num2
         for (unsigned int i = 0; i < num2.size(); ++i) {
-            if (num2.size()%2 == 0) {
+            if (num1.size()%2 == 0) { //num2.size()
                 if (i >= m) {
                     b0.push_back(num2.at(i));
                 }
@@ -240,12 +332,18 @@ vector<int> karatsuba(vector<int> num1, vector<int> num2) {
             }
         }
 
+/*
+        cout << "b0 ";
+        printIntVector(b0);
+        cout << "b1 ";
+        printIntVector(b1); */
+
         c2 = karatsuba(a1, b1);
         c0 = karatsuba(a0, b0);
         //a1+a0, b1+b0
-        c1special = karatsuba(VectorAddition(a1, a0), VectorAddition(b1, b0));
+        special = karatsuba(VectorAddition(a1, a0), VectorAddition(b1, b0));
         // -c2-c0
-        c1 = VectorSubtract(c1special, VectorAddition(c2, c0));
+        c1 = VectorSubtract(special, VectorSubtract(c2, c0));
         //return 10^2m * c2 + 10^m *c1 + c0
         toTheTenth(c2, 2, m);
         toTheTenth(c1, 1, m);
@@ -274,7 +372,7 @@ int main(int argc, char* argv[]) {
         number2.push_back(charToInt(character));
     }
     
-/*     printIntVector(number1);
+    /* printIntVector(number1);
     cout << " ";
     printIntVector(number2); */
 
