@@ -394,6 +394,12 @@ int main(int argc, char* argv[]) {
     cout << " ";
     printIntVector(number2); */
 
+/*
+    cout << "practice add";
+    vector<int> practiceAdd = VectorAddition(number1, number2);
+    printIntVector(practiceAdd);
+*/
+
     //printing final values
     bruteForceVector = bruteForce(number1, number2);
     cout << "** Brute Force: ";
